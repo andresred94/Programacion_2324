@@ -309,8 +309,7 @@ public class ConexionABdD {
 
 
     public String establecerNombreBdD(String nombreBdD){
-        String urlFormateada  = URL.replaceAll("nomBdD", nombreBdD);
-        return urlFormateada;
+        return URL.replaceAll("nomBdD", nombreBdD);
     }// fin establecerNombreBdD
 
 

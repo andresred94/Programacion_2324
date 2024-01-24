@@ -18,27 +18,33 @@ public class CuentaCorriente {
         char opEscogida;
         // Inicio del programa
         do {
-
             int op = menuBienvenida ();
-            CuentaCorriente cuenta = new CuentaCorriente ();
-
+            // Creación de objetos de la clase
+            CuentaCorriente cuenta1 = new CuentaCorriente ();
+            CuentaCorriente cuenta2 = new CuentaCorriente ();
+            while ( op < 1 || op > 5 ){
+                System.out.print ("No has ingresado una opción válida...%n");
+                System.out.print ("Vuelve a ingresar otra opción = ");
+                op = lector.nextInt ();
+            }
             switch ( op ) {
                 case 1:
                     lector.nextLine ();
                     System.out.print ( "Ingresa tu DNI con la letra incluida = " );
                     String dni1 = lector.nextLine ();
                     dni1 = dni1.toUpperCase ();
-                    cuenta.setDNI ( dni1 );
-                    // Insertar el DNI
+                    // establecemos el DNI a la cuenta1
+                    cuenta1.setDNI ( dni1 );
                     System.out.print ( "Ingresa tu nombre = " );
                     String nom1 = lector.nextLine ();
-                    cuenta.setTitular ( nom1 );
+                    // establecemos el nombre de la cuenta1
+                    cuenta1.setTitular ( nom1 );
+                    // ingresamos los datos en la base de datos
                     String insertarDatos = "INSERT INTO cuentas (DNI,titular) VALUES (?, ?)";
                     conex1.setSentencia ( insertarDatos );
                     String[][] datos1 = {
                             {"1" , dni1} ,
                             {"2" , nom1}
-
                     };
                     conex1.insertarDatos ( datos1 );
                     break;
@@ -48,31 +54,38 @@ public class CuentaCorriente {
                     System.out.print ( "Ingresa tu DNI con la letra incluida = " );
                     String dni2 = lector.nextLine ();
                     dni2 = dni2.toUpperCase ();
-                    cuenta.setDNI ( dni2 );
-                    // comprobar que se encuentra el DNI introducido
+                    // establecemos el DNI a la cuenta1
+                    cuenta1.setDNI ( dni2 );
+                    // comprobar que se encuentra el DNI introducido en la BdD
                     String sentenciaConsulta2 = "SELECT saldo FROM cuentas WHERE DNI = ?\n";
                     String col2 = "saldo";
                     conex1.setSentencia ( sentenciaConsulta2 );
                     String resConsulta2 = conex1.almacenarResultadoConsulta ( sentenciaConsulta2 , dni2 , col2 );
+                    while ( resConsulta2 == null ){
+                        System.err.println ("El DNI ingresado no existe...");
+                        System.out.print ( "Vuelve a ingresar tu DNI con la letra incluida = " );
+                        dni2 = lector.nextLine ();
+                        dni2 = dni2.toUpperCase ();
+                        resConsulta2 = conex1.almacenarResultadoConsulta ( sentenciaConsulta2 , dni2 , col2 );
+                    }
 
-                    System.out.printf ( "Tienes %s€ en la cuenta.%n" , resConsulta2 );
+                    System.out.printf ( "Tienes %s € en la cuenta.%n" , resConsulta2 );
+
                     System.out.print ( "¿ Cuanto vas a ingresar ? = " );
                     String cantIngresa = lector.nextLine ();
                     System.out.print ( "Presiona la tecla [ENTER] para continuar..." );
                     lector.nextLine ();
-                    cuenta.setSaldo ( Double.parseDouble ( cantIngresa ) );
+
                     double canDoub = Double.parseDouble ( cantIngresa );
                     double saldoNow = Double.parseDouble ( resConsulta2 );
 
-                    if ( canDoub < saldoNow ) {
-                        System.out.println ( "No puedes ingresar esa cantidad" );
-                    } else if ( canDoub > 0 ) {
-                        saldoNow = saldoNow + canDoub;
-                        cuenta.setSaldo ( saldoNow );
-                    }
+                    saldoNow = saldoNow + canDoub;
+                    String saldoNowSt = Double.toString ( saldoNow );
+                    // establecemos el saldo resultante despues de sumar la cantidad ingresada
+                    cuenta1.setSaldo ( Double.parseDouble ( saldoNowSt ) );
 
                     // Modificar una fila de una tabla
-                    double saldoTotal2 = cuenta.getSaldo ();
+                    double saldoTotal2 = cuenta1.getSaldo ();// obtener el saldo actual de la cuenta1
                     String saldoSt2 = Double.toString ( saldoTotal2 );
                     String updateDatos2 = "UPDATE cuentas SET saldo = ? WHERE DNI = ?";
                     conex1.setSentencia ( updateDatos2 );
@@ -88,7 +101,7 @@ public class CuentaCorriente {
                     System.out.print ( "Ingresa tu DNI con la letra incluida = " );
                     String dni3 = lector.nextLine ();
                     dni3 = dni3.toUpperCase ();
-                    cuenta.setDNI ( dni3 );
+                    cuenta1.setDNI ( dni3 );
                     // comprobar que se encuentra el DNI introducido
                     // realizar una consulta
                     //String sentenciaConsulta = "SELECT DNI,titular,saldo FROM cuentas WHERE DNI = '52053342H';\n";
@@ -106,12 +119,12 @@ public class CuentaCorriente {
                     double saldoNow3 = Double.parseDouble ( resConsulta );
                     if ( canDoub3 < saldoNow3 ) {
                         canDoub3 = saldoNow3 - canDoub3;
-                        cuenta.setSaldo ( canDoub3 );
+                        cuenta1.setSaldo ( canDoub3 );
                     } else {
                         System.out.print ( "No tienes suficiente saldo." );
                     }
                     // Modificar una fila de una tabla
-                    double saldoTotal = cuenta.getSaldo ();
+                    double saldoTotal = cuenta1.getSaldo ();
                     String saldoSt = Double.toString ( saldoTotal );
                     String updateDatos3 = "UPDATE cuentas SET saldo = ? WHERE DNI = ?";
                     conex1.setSentencia ( updateDatos3 );
@@ -268,7 +281,7 @@ public class CuentaCorriente {
     }
 
     public void setDNI ( String dni ) {
-        if ( DNI.length () > 9 || DNI.isEmpty () ) {
+        if ( dni.length () > 10 || dni.isEmpty () ) {
             System.err.println ( "EL DNI ingresado no es válido." );
         } else {
             DNI = dni;
@@ -299,8 +312,8 @@ public class CuentaCorriente {
     public static int menuBienvenida () {
         System.out.printf ( "Bienvenido a la app del banco Sin Fondos.%n" );
         System.out.printf ( "1.- Darte de alta en el banco.%n" );
-        System.out.printf ( "2.- Ingresar dinero a tu cuenta.%n" );
-        System.out.printf ( "3.- Retirar dinero de tu cuenta.%n" );
+        System.out.printf ( "2.- Ingresar dinero a mi cuenta.%n" );
+        System.out.printf ( "3.- Retirar dinero de mi cuenta.%n" );
         System.out.printf ( "4.- Ingresar dinero a otra cuenta.%n" );
         System.out.printf ( "5.- Mostrar mi saldo.%n" );
         System.out.print ( "Escoge una opción = " );
