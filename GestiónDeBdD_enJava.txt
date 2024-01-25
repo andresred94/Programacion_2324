@@ -1,0 +1,64 @@
+		// Establecer nombre BdD
+        String nombreBdD = "CuentasBancarias";
+        String username = "admin00";
+        String password = "alumno";
+        String urlmodificada = conex1.establecerNombreBdD ( nombreBdD );
+        conex1.setURL ( urlmodificada );
+        conex1.setUsr ( username );
+        conex1.setPwd ( password );
+
+        /*String urlConnect = conex1.getURL ();
+        System.out.println (urlConnect);// url de conexion a la BdD*/
+
+        // Crear la BdD
+        /*String crearBdD = "CREATE DATABASE IF NOT EXISTS CuentasBancarias";
+        conex1.setSentencia ( crearBdD );
+        conex1.crearBdD ();*/
+
+        // Creamos la tabla
+        /*String sentenciaCreateTable = "CREATE TABLE cuentas (\n" +
+                "DNI VARCHAR(9) PRIMARY KEY,\n" +
+                "titular VARCHAR(30),\n" +
+                "saldo DECIMAL\n" +
+                ");";
+        conex1.setSentencia ( sentenciaCreateTable );
+        conex1.crearTabla ();*/
+
+        // Insertar datos con ARRAY 2D
+        String insertarDatos = "INSERT INTO cuentas (DNI,titular,saldo) VALUES (?, ? , ?)";// VALUES (?, ?, ?) indica la cantidad de columnas que tiene la tabla
+        conex1.setSentencia ( insertarDatos );
+        String [][] datos ={
+                {"1","54867424E"},
+                {"2","Elber Galarga"},
+                {"3","3500"}
+        };
+        conex1.insertarDatos (datos);
+
+        // Insertar datos por separado
+        /*String insertarDatos = "INSERT INTO cuentas (DNI) VALUES (?)";
+        conex1.setSentencia ( insertarDatos );
+        String dni = "52053342H";
+        conex1.insertarVarchar ( 1,dni );*/
+
+        // Modificar una fila de una tabla
+        /*String updateDatos = "UPDATE cuentas SET titular = ?, saldo = ? WHERE DNI = ?";
+        conex1.setSentencia ( updateDatos );
+        String [][] datos ={
+                {"1","Andres Martin Bravo Castro"},
+                {"2","100000"},
+                {"3","52053342H"}
+
+        };
+        conex1.modificarFila ( datos );*/
+
+        // realizar una consulta
+        //String sentenciaConsulta = "SELECT DNI,titular,saldo FROM cuentas WHERE DNI = '52053342H';\n";
+        String sentenciaConsulta = "SELECT DNI,titular,saldo FROM cuentas;\n";
+        conex1.setSentencia ( sentenciaConsulta );
+        String [] columnas = {
+                "DNI","titular","saldo"
+        };
+        conex1.realizarConsulta ( columnas );
+		
+		// Sentencia SQL para la consulta
+            String sql = "SELECT saldo FROM cuentas WHERE DNI = ?";
