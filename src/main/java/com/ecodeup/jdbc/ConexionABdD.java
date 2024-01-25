@@ -237,6 +237,38 @@ public class ConexionABdD {
         }
     }// fin insertarDatos
 
+    public void insertarDatosDecimales( double [][] datos ){
+        try {
+            Connection connection = DriverManager.getConnection(URL, usr, pwd);
+
+            // Crear una sentencia preparada para la inserción
+            PreparedStatement preparedStatement = connection.prepareStatement(sentencia);
+
+            // Ingresa los valores que son Varchar
+            for (int i = 0; i < datos.length; i++) {
+                for (int j = 0; j < datos[i].length; j++) {
+                    int parametro = (int) datos[i][0];
+                    preparedStatement.setDouble (parametro, datos[i][j]); // Ajuste de posición del parámetro
+                }
+            }
+            // Ejecutar la inserción
+            int filasAfectadas = preparedStatement.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                System.out.println("Inserción exitosa. Filas afectadas: " + filasAfectadas);
+            } else {
+                System.out.println("No se pudo insertar el registro.");
+            }
+
+            // Cerrar la conexión y la sentencia preparada
+            preparedStatement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void insertarDatos (  String [][] datos ){
         try {
             Connection connection = DriverManager.getConnection(URL, usr, pwd);
