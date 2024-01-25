@@ -269,7 +269,6 @@ public class ConexionABdD {
         }
     }// fin insertarDatos
 
-
     public void modificarFila( String [][] datos ){
         try {
             Connection connection = DriverManager.getConnection(URL, usr, pwd);
@@ -285,7 +284,6 @@ public class ConexionABdD {
                     preparedStatement.setString(parametro, datos[i][j]); // Ajuste de posición del parámetro
                 }
             }
-
 
             // Ejecutar la actualización
             int filasAfectadas = preparedStatement.executeUpdate();
@@ -304,13 +302,10 @@ public class ConexionABdD {
             e.printStackTrace();
         }
 
-
     }// fin modificarFila
-
 
     public String establecerNombreBdD(String nombreBdD){
         return URL.replaceAll("nomBdD", nombreBdD);
     }// fin establecerNombreBdD
-
 
 }// fin-class ConexionABdD
