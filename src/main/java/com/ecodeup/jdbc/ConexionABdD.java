@@ -68,7 +68,36 @@ public class ConexionABdD {
         }
     }// fin crearBdD
 
-    public String almacenarResultadoConsulta ( String sentencia , String valAbuscar , String columna){
+    public int obtenerUnEntero ( String sentencia ){
+        int maxId = -1; // Valor predeterminado en caso de que no se encuentren registros o haya un error
+
+        try {
+            Connection connection = DriverManager.getConnection(URL, usr, pwd);
+
+            // Crear una sentencia preparada con la sentencia SQL
+            PreparedStatement preparedStatement = connection.prepareStatement(sentencia);
+
+            // Ejecutar la consulta y obtener el resultado
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Verificar si hay resultados
+            if (resultSet.next()) {
+                // Obtener el valor de la columna MAX(id)
+                maxId = resultSet.getInt(1);
+            }
+
+            // Cerrar la conexión, la sentencia preparada y el resultado
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return maxId;
+    }// fin obtenerUnEntero
+
+    public String obtenerUnVarchar ( String sentencia , String valAbuscar , String columna){
         String resultado = null;
 
         try {
